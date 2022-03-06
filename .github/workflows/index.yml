@@ -10,6 +10,6 @@ jobs:
     steps:
       - name: test-step-1
         id: test-step-1
-        uses: adventintl/adventlabs-action@master
+        uses: adventintl/adventlabs-action@v0.0.2
         with:
           repo_names: "adventintl/adventlabs-action"
