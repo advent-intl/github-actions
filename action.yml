@@ -1,0 +1,9 @@
+name: 'AdventLabs Syncer'
+description: 'Syncs labels and milestones'
+inputs:
+  repo_names:
+    required: true
+    description: "repositories to sync"
+runs:
+  using: 'node16'
+  main: 'index.js'

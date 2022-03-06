@@ -1,0 +1,15 @@
+on:
+  label:
+    types:
+      - created
+
+jobs:
+  labels-sync:
+    runs-on: ubuntu-latest
+    name: test1
+    steps:
+      - name: test-step-1
+        id: test-step-1
+        uses: adventintl/adventlabs-action
+        with:
+          repo_names: "adventintl/adventlabs-action"
