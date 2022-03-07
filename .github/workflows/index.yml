@@ -2,6 +2,7 @@ on:
   label:
     types:
       - created
+      - edited
 
 jobs:
   labels-sync:

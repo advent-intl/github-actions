@@ -2,7 +2,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 
 try {
-    const repositories = core.getInput('repositories');
+    const repositories = core.getInput('repo_names');
     console.log(repositories);
 
     // Get the JSON webhook payload for the event that triggered the workflow

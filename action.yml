@@ -1,4 +1,4 @@
-name: 'AdventLabs Syncer'
+name: 'Label Syncer'
 description: 'Syncs labels and milestones'
 inputs:
   repo_names:
