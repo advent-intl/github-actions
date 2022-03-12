@@ -1,9 +1,9 @@
 # github-actions
 
 Github js actions for sync-ing labels and milestones
-Build using ncc:
+Build:
 
 ```
-npm i -g @vercel/ncc
-ncc build index.js 
+yarn install
+yarn build
 ```
