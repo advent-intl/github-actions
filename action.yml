@@ -1,9 +1,12 @@
 name: 'Label Syncer'
 description: 'Syncs labels and milestones'
 inputs:
-  repo_names:
+  token:
     required: true
-    description: "repositories to sync"
+    description: "GH token"
+  team:
+    required: true
+    description: "Org team which defines repos scope"
 runs:
   using: 'node16'
   main: 'dist/index.js'

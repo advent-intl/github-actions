@@ -16,8 +16,10 @@ async function handleLabelEvent() {
      org: owner,
      team_slug: team,
    })).data?.map(({ name }) => name);
+  console.log({ repos });
   const { action, label } = github.context.payload; 
   if (action === LabelAction.Created) {
+    console.log('Creating labels', label);
     createLabel(octokit, repos, label);
   }
 }
@@ -50,6 +52,7 @@ async function main() {
 
   try {
     if (github.context.payload.label) {
+      console.log('Handling label event');
       handleLabelEvent();
     }
   } catch (err) {
