@@ -33,9 +33,7 @@ async function handleLabelEvent() {
     deleteLabel(octokit, repos, label);
   } else if (action === LabelAction.Edited) {
     console.log("Eiditing labels", label);
-    const from = changes?.name?.from;
-    if (!from) return;
-    editLabel(octokit, repos, label, from);
+    editLabel(octokit, repos, label, changes);
   }
 }
 
@@ -81,20 +79,31 @@ async function deleteLabel(
   );
 }
 
+interface LabelChange {
+  from: string;
+}
+
+interface LabelChanges {
+  color?: LabelChange;
+  name?: LabelChange;
+  description?: LabelChange;
+}
+
 async function editLabel(
   octokit: ReturnType<typeof github.getOctokit>,
   repos: string[],
   label: Label,
-  from: string
+  changes: LabelChanges
 ) {
-  const { name, description, color } = label;
+  const { name: new_name, description, color } = label;
+  const name = changes.name?.from || label.name;
   await Promise.allSettled(
     repos.map((repo) =>
       octokit.rest.issues.updateLabel({
         owner,
         repo,
-        name: from,
-        new_name: name,
+        name,
+        new_name,
         description,
         color,
       })

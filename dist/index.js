@@ -8538,7 +8538,7 @@ var LabelAction;
     LabelAction["Edited"] = "edited";
 })(LabelAction || (LabelAction = {}));
 function handleLabelEvent() {
-    var _a, _b;
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const repos = (_a = (yield octokit.rest.teams.listReposInOrg({
             org: owner,
@@ -8555,10 +8555,7 @@ function handleLabelEvent() {
         }
         else if (action === LabelAction.Edited) {
             console.log("Eiditing labels", label);
-            const from = (_b = changes === null || changes === void 0 ? void 0 : changes.name) === null || _b === void 0 ? void 0 : _b.from;
-            if (!from)
-                return;
-            editLabel(octokit, repos, label, from);
+            editLabel(octokit, repos, label, changes);
         }
     });
 }
@@ -8584,14 +8581,16 @@ function deleteLabel(octokit, repos, label) {
         })));
     });
 }
-function editLabel(octokit, repos, label, from) {
+function editLabel(octokit, repos, label, changes) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const { name, description, color } = label;
+        const { name: new_name, description, color } = label;
+        const name = ((_a = changes.name) === null || _a === void 0 ? void 0 : _a.from) || label.name;
         yield Promise.allSettled(repos.map((repo) => octokit.rest.issues.updateLabel({
             owner,
             repo,
-            name: from,
-            new_name: name,
+            name,
+            new_name,
             description,
             color,
         })));
