@@ -6,6 +6,7 @@ const token = core.getInput('token');
 const team = core.getInput('team');
 const octokit = github.getOctokit(token);
 
+console.log({ eventName: github.context.eventName });
 enum LabelAction {
   Created = 'created',
   Deleted = 'deleted',
@@ -36,7 +37,7 @@ async function createLabel(
    label: Label 
 ) {
  const { name, color, description } = label;
- await Promise.all(repos.map(repo => 
+ await Promise.allSettled(repos.map(repo => 
    octokit.rest.issues.createLabel({
      owner,
      repo,

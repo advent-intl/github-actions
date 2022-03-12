@@ -8529,6 +8529,7 @@ const owner = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.organ
 const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('token');
 const team = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('team');
 const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit(token);
+console.log({ eventName: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName });
 var LabelAction;
 (function (LabelAction) {
     LabelAction["Created"] = "created";
@@ -8541,8 +8542,10 @@ function handleLabelEvent() {
             org: owner,
             team_slug: team,
         })).data) === null || _a === void 0 ? void 0 : _a.map(({ name }) => name);
+        console.log({ repos });
         const { action, label } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
         if (action === LabelAction.Created) {
+            console.log('Creating labels', label);
             createLabel(octokit, repos, label);
         }
     });
@@ -8550,7 +8553,7 @@ function handleLabelEvent() {
 function createLabel(octokit, repos, label) {
     return __awaiter(this, void 0, void 0, function* () {
         const { name, color, description } = label;
-        yield Promise.all(repos.map(repo => octokit.rest.issues.createLabel({
+        yield Promise.allSettled(repos.map(repo => octokit.rest.issues.createLabel({
             owner,
             repo,
             name,
@@ -8565,6 +8568,7 @@ function main() {
         console.log(`The event payload: ${payload}`);
         try {
             if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.label) {
+                console.log('Handling label event');
                 handleLabelEvent();
             }
         }
