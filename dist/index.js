@@ -8526,39 +8526,74 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 const owner = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.organization.login;
-const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('token');
-const team = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('team');
+const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("token");
+const team = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("team");
 const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit(token);
+const { name: currentRepo } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.repository;
 console.log({ eventName: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName });
 var LabelAction;
 (function (LabelAction) {
     LabelAction["Created"] = "created";
     LabelAction["Deleted"] = "deleted";
+    LabelAction["Edited"] = "edited";
 })(LabelAction || (LabelAction = {}));
 function handleLabelEvent() {
-    var _a;
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         const repos = (_a = (yield octokit.rest.teams.listReposInOrg({
             org: owner,
             team_slug: team,
-        })).data) === null || _a === void 0 ? void 0 : _a.map(({ name }) => name);
-        console.log({ repos });
-        const { action, label } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
+        })).data) === null || _a === void 0 ? void 0 : _a.map(({ name }) => name).filter((name) => name != currentRepo);
+        const { action, label, changes } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
         if (action === LabelAction.Created) {
-            console.log('Creating labels', label);
+            console.log("Creating labels", label);
             createLabel(octokit, repos, label);
+        }
+        else if (action === LabelAction.Deleted) {
+            console.log("Deleting labels", label);
+            deleteLabel(octokit, repos, label);
+        }
+        else if (action === LabelAction.Edited) {
+            console.log("Eiditing labels", label);
+            const from = (_b = changes === null || changes === void 0 ? void 0 : changes.name) === null || _b === void 0 ? void 0 : _b.from;
+            if (!from)
+                return;
+            editLabel(octokit, repos, label, from);
         }
     });
 }
 function createLabel(octokit, repos, label) {
     return __awaiter(this, void 0, void 0, function* () {
         const { name, color, description } = label;
-        yield Promise.allSettled(repos.map(repo => octokit.rest.issues.createLabel({
+        yield Promise.allSettled(repos.map((repo) => octokit.rest.issues.createLabel({
             owner,
             repo,
             name,
             color,
             description,
+        })));
+    });
+}
+function deleteLabel(octokit, repos, label) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { name } = label;
+        yield Promise.allSettled(repos.map((repo) => octokit.rest.issues.deleteLabel({
+            owner,
+            repo,
+            name,
+        })));
+    });
+}
+function editLabel(octokit, repos, label, from) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { name, description, color } = label;
+        yield Promise.allSettled(repos.map((repo) => octokit.rest.issues.updateLabel({
+            owner,
+            repo,
+            name: from,
+            new_name: name,
+            description,
+            color,
         })));
     });
 }
@@ -8568,7 +8603,7 @@ function main() {
         console.log(`The event payload: ${payload}`);
         try {
             if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.label) {
-                console.log('Handling label event');
+                console.log("Handling label event");
                 handleLabelEvent();
             }
         }
