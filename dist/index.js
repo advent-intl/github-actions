@@ -8527,7 +8527,6 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 const owner = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.organization.login;
 const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("token");
-const team = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("team");
 const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit(token);
 const { name: currentRepo } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.repository;
 console.log({ eventName: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName });
@@ -8540,9 +8539,8 @@ var LabelAction;
 function handleLabelEvent() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const repos = (_a = (yield octokit.rest.teams.listReposInOrg({
+        const repos = (_a = (yield octokit.rest.repos.listForOrg({
             org: owner,
-            team_slug: team,
         })).data) === null || _a === void 0 ? void 0 : _a.map(({ name }) => name).filter((name) => name != currentRepo);
         const { action, label, changes } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
         if (action === LabelAction.Created) {
