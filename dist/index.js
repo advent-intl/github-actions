@@ -8598,14 +8598,9 @@ function editLabel(octokit, repos, label, changes) {
     });
 }
 function main() {
-    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const payload = JSON.stringify(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload, undefined, 2);
         console.log(`The event payload: ${payload}`);
-        const login = (_a = (yield octokit.rest.users.getAuthenticated()).data) === null || _a === void 0 ? void 0 : _a.login;
-        // TODO: rework to not hardcode user !?
-        if (!login || 'adventlabs' === login)
-            return;
         try {
             if ('label' === eventName) {
                 console.log("Handling label event");

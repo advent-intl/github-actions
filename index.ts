@@ -115,9 +115,6 @@ async function editLabel(
 async function main() {
   const payload = JSON.stringify(github.context.payload, undefined, 2);
   console.log(`The event payload: ${payload}`);
-  const login = (await octokit.rest.users.getAuthenticated()).data?.login;
-  // TODO: rework to not hardcode user !?
-  if (!login || 'adventlabs' === login) return;
   try {
     if ('label' === eventName) {
       console.log("Handling label event");
