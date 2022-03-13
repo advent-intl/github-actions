@@ -19,6 +19,7 @@ async function handleLabelEvent() {
       org: owner,
     })
   ).data
+    .filter((repo) => repo.private)
     ?.map(({ name }) => name)
     .filter((name) => name != currentRepo);
   
