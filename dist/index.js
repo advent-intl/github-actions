@@ -8529,7 +8529,8 @@ const owner = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.organ
 const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("token");
 const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit(token);
 const { name: currentRepo } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.repository;
-console.log({ eventName: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName });
+const { eventName } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context;
+console.log({ eventName });
 var LabelAction;
 (function (LabelAction) {
     LabelAction["Created"] = "created";
@@ -8597,11 +8598,16 @@ function editLabel(octokit, repos, label, changes) {
     });
 }
 function main() {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const payload = JSON.stringify(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload, undefined, 2);
         console.log(`The event payload: ${payload}`);
+        const login = (_a = (yield octokit.rest.users.getAuthenticated()).data) === null || _a === void 0 ? void 0 : _a.login;
+        // TODO: rework to not hardcode user !?
+        if (!login || 'adventlabs' === login)
+            return;
         try {
-            if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.label) {
+            if ('label' === eventName) {
                 console.log("Handling label event");
                 handleLabelEvent();
             }

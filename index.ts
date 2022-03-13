@@ -6,7 +6,8 @@ const token = core.getInput("token");
 const octokit = github.getOctokit(token);
 const { name: currentRepo } = github.context.payload.repository;
 
-console.log({ eventName: github.context.eventName });
+const { eventName } = github.context;
+console.log({ eventName });
 enum LabelAction {
   Created = "created",
   Deleted = "deleted",
@@ -114,9 +115,11 @@ async function editLabel(
 async function main() {
   const payload = JSON.stringify(github.context.payload, undefined, 2);
   console.log(`The event payload: ${payload}`);
-
+  const login = (await octokit.rest.users.getAuthenticated()).data?.login;
+  // TODO: rework to not hardcode user !?
+  if (!login || 'adventlabs' === login) return;
   try {
-    if (github.context.payload.label) {
+    if ('label' === eventName) {
       console.log("Handling label event");
       handleLabelEvent();
     }
