@@ -8542,6 +8542,7 @@ function handleLabelEvent() {
         const repos = (_a = (yield octokit.rest.repos.listForOrg({
             org: owner,
         })).data) === null || _a === void 0 ? void 0 : _a.map(({ name }) => name).filter((name) => name != currentRepo);
+        console.log({ repos });
         const { action, label, changes } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
         if (action === LabelAction.Created) {
             console.log("Creating labels", label);

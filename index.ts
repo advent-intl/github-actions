@@ -21,7 +21,8 @@ async function handleLabelEvent() {
   ).data
     ?.map(({ name }) => name)
     .filter((name) => name != currentRepo);
-
+  
+  console.log({ repos });
   const { action, label, changes } = github.context.payload;
   if (action === LabelAction.Created) {
     console.log("Creating labels", label);
