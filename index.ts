@@ -3,7 +3,6 @@ import * as github from "@actions/github";
 
 const owner = github.context.payload.organization.login;
 const token = core.getInput("token");
-const team = core.getInput("team");
 const octokit = github.getOctokit(token);
 const { name: currentRepo } = github.context.payload.repository;
 
@@ -16,9 +15,8 @@ enum LabelAction {
 
 async function handleLabelEvent() {
   const repos = (
-    await octokit.rest.teams.listReposInOrg({
+    await octokit.rest.repos.listForOrg({
       org: owner,
-      team_slug: team,
     })
   ).data
     ?.map(({ name }) => name)

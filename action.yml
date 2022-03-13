@@ -4,9 +4,6 @@ inputs:
   token:
     required: true
     description: "GH token"
-  team:
-    required: true
-    description: "Org team which defines repos scope"
-runs:
+ runs:
   using: 'node16'
   main: 'dist/index.js'
