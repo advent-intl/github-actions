@@ -1,5 +1,7 @@
 import * as github from "@actions/github";
 import { HandlerOpts } from "./types";
+import { reportSettled } from "./reportSettled";
+
 
 enum LabelAction {
   Created = "created",
@@ -45,7 +47,7 @@ async function createLabel(
         description,
       })
     )
-  );
+  ).then(reportSettled);
 }
 
 async function deleteLabel(
@@ -63,7 +65,7 @@ async function deleteLabel(
         name,
       })
     )
-  );
+  ).then(reportSettled);
 }
 
 interface LabelChange {
@@ -96,5 +98,5 @@ async function editLabel(
         color,
       })
     )
-  );
+  ).then(reportSettled);
 }

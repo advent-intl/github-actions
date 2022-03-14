@@ -8487,6 +8487,13 @@ __nccwpck_require__.r(__webpack_exports__);
 var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
+;// CONCATENATED MODULE: ./reportSettled.ts
+function reportSettled(settled) {
+    settled
+        .filter((p) => p.status === "rejected")
+        .forEach((p) => console.log(p.reason));
+}
+
 ;// CONCATENATED MODULE: ./label.ts
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -8497,6 +8504,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+
 
 var LabelAction;
 (function (LabelAction) {
@@ -8531,7 +8539,7 @@ function createLabel(octokit, owner, repos, label) {
             name,
             color,
             description,
-        })));
+        }))).then(reportSettled);
     });
 }
 function deleteLabel(octokit, owner, repos, label) {
@@ -8541,7 +8549,7 @@ function deleteLabel(octokit, owner, repos, label) {
             owner,
             repo,
             name,
-        })));
+        }))).then(reportSettled);
     });
 }
 function editLabel(octokit, owner, repos, label, changes) {
@@ -8556,7 +8564,7 @@ function editLabel(octokit, owner, repos, label, changes) {
             new_name,
             description,
             color,
-        })));
+        }))).then(reportSettled);
     });
 }
 
@@ -8570,6 +8578,7 @@ var milestone_awaiter = (undefined && undefined.__awaiter) || function (thisArg,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+
 
 const { getOctokit } = github;
 var MilestoneAction;
@@ -8627,7 +8636,7 @@ function createMilestone(octokit, owner, repos, milestone) {
             state,
             description,
             due_on
-        })));
+        }))).then(reportSettled);
     });
 }
 function updateMilestone(octokit, owner, repos, milestone, changes) {
@@ -8649,7 +8658,7 @@ function updateMilestone(octokit, owner, repos, milestone, changes) {
                 description,
                 due_on,
             });
-        })));
+        }))).then(reportSettled);
     });
 }
 function deleteMilestone(octokit, owner, repos, milestone) {
@@ -8657,6 +8666,7 @@ function deleteMilestone(octokit, owner, repos, milestone) {
         yield Promise.allSettled(repos.map((repo) => milestone_awaiter(this, void 0, void 0, function* () {
             const { title } = milestone;
             const number = yield getMilestoneNumber(octokit, owner, repo, title);
+            console.log({ repo, title, number });
             if (!number)
                 return;
             yield octokit.rest.issues.deleteMilestone({
@@ -8664,7 +8674,7 @@ function deleteMilestone(octokit, owner, repos, milestone) {
                 repo,
                 milestone_number: number,
             });
-        })));
+        }))).then(reportSettled);
     });
 }
 

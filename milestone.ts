@@ -1,5 +1,6 @@
 import * as github from "@actions/github";
 import { HandlerOpts } from "./types";
+import { reportSettled } from './reportSettled';
 
 const { getOctokit } = github;
 enum MilestoneAction {
@@ -90,7 +91,7 @@ async function createMilestone(
         due_on
       })
     )
-  );
+  ).then(reportSettled);
 }
 
 async function updateMilestone(
@@ -117,7 +118,7 @@ async function updateMilestone(
         due_on,
       });
     })
-  );
+  ).then(reportSettled);
 }
 
 async function deleteMilestone(
@@ -130,6 +131,7 @@ async function deleteMilestone(
     repos.map(async (repo) => {
       const { title } = milestone;
       const number = await getMilestoneNumber(octokit, owner, repo, title);
+      console.log({ repo, title, number });
       if (!number) return;
       await octokit.rest.issues.deleteMilestone({
         owner,
@@ -137,5 +139,5 @@ async function deleteMilestone(
         milestone_number: number,
       });
     })
-  );
+  ).then(reportSettled);
 }
