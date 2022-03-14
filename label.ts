@@ -81,10 +81,10 @@ async function editLabel(
   owner: string,
   repos: string[],
   label: Label,
-  changes: LabelChanges
+  changes?: LabelChanges
 ) {
   const { name: new_name, description, color } = label;
-  const name = changes.name?.from || label.name;
+  const name = changes?.name?.from || label.name;
   await Promise.allSettled(
     repos.map((repo) =>
       octokit.rest.issues.updateLabel({

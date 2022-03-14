@@ -98,11 +98,11 @@ async function updateMilestone(
   owner: string,
   repos: string[],
   milestone: Milestone,
-  changes: MilestoneChanges
+  changes?: MilestoneChanges
 ) {
   await Promise.allSettled(
     repos.map(async (repo) => {
-      const oldTitle = changes.title?.from || milestone.title;
+      const oldTitle = changes?.title?.from || milestone.title;
       const number = await getMilestoneNumber(octokit, owner, repo, oldTitle);
       console.log({ repo, oldTitle, number });
       if (!number) return;

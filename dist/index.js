@@ -8548,7 +8548,7 @@ function editLabel(octokit, owner, repos, label, changes) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const { name: new_name, description, color } = label;
-        const name = ((_a = changes.name) === null || _a === void 0 ? void 0 : _a.from) || label.name;
+        const name = ((_a = changes === null || changes === void 0 ? void 0 : changes.name) === null || _a === void 0 ? void 0 : _a.from) || label.name;
         yield Promise.allSettled(repos.map((repo) => octokit.rest.issues.updateLabel({
             owner,
             repo,
@@ -8634,7 +8634,7 @@ function updateMilestone(octokit, owner, repos, milestone, changes) {
     return milestone_awaiter(this, void 0, void 0, function* () {
         yield Promise.allSettled(repos.map((repo) => milestone_awaiter(this, void 0, void 0, function* () {
             var _a;
-            const oldTitle = ((_a = changes.title) === null || _a === void 0 ? void 0 : _a.from) || milestone.title;
+            const oldTitle = ((_a = changes === null || changes === void 0 ? void 0 : changes.title) === null || _a === void 0 ? void 0 : _a.from) || milestone.title;
             const number = yield getMilestoneNumber(octokit, owner, repo, oldTitle);
             console.log({ repo, oldTitle, number });
             if (!number)
