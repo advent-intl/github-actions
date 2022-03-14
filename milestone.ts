@@ -79,16 +79,15 @@ async function createMilestone(
   milestone: Milestone
 ) {
 
-  const { title, state, description, due_on } = milestone;
+  const { title, description, due_on } = milestone;
   await Promise.allSettled(
     repos.map((repo) =>
       octokit.rest.issues.createMilestone({
         owner,
         repo,
         title,
-        state,
         description,
-        due_on
+        due_on: due_on || undefined // null produces error 
       })
     )
   ).then(reportSettled);
@@ -115,7 +114,7 @@ async function updateMilestone(
         title,
         state,
         description,
-        due_on,
+        due_on: due_on || undefined, // null produces error
       });
     })
   ).then(reportSettled);
