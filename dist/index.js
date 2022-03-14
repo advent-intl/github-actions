@@ -8589,15 +8589,15 @@ function handleMilestoneEvent(opts) {
             createMilestone(octokit, owner, repos, milestone);
             // createMilestone(octokit, owner, repos, milestone);
         }
-        else if (action === MilestoneAction.Edited) {
-            console.log("Editing milestone", milestone);
-            updateMilestone(octokit, owner, repos, milestone, changes);
-        }
         else if ([
             MilestoneAction.Edited,
             MilestoneAction.Opened,
             MilestoneAction.Closed,
         ].includes(action)) {
+            console.log("Editing milestone", milestone);
+            updateMilestone(octokit, owner, repos, milestone, changes);
+        }
+        else if (action === MilestoneAction.Deleted) {
             console.log("Deleting milestone", milestone);
             deleteMilestone(octokit, owner, repos, milestone);
         }
@@ -8612,7 +8612,7 @@ function getMilestoneNumber(octokit, owner, repo, title) {
             owner,
             repo,
             per_page: 100,
-            direction: 'desc',
+            direction: "desc",
         })).data) === null || _a === void 0 ? void 0 : _a.find((milestone) => milestone.title === title);
         return (milestone === null || milestone === void 0 ? void 0 : milestone.number) || null;
     });

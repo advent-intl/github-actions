@@ -36,9 +36,6 @@ export async function handleMilestoneEvent(opts: HandlerOpts) {
     console.log("Creating milestone", milestone);
     createMilestone(octokit, owner, repos, milestone);
     // createMilestone(octokit, owner, repos, milestone);
-  } else if (action === MilestoneAction.Edited) {
-    console.log("Editing milestone", milestone);
-    updateMilestone(octokit, owner, repos, milestone, changes);
   } else if (
     [
       MilestoneAction.Edited,
@@ -46,6 +43,9 @@ export async function handleMilestoneEvent(opts: HandlerOpts) {
       MilestoneAction.Closed,
     ].includes(action as MilestoneAction)
   ) {
+    console.log("Editing milestone", milestone);
+    updateMilestone(octokit, owner, repos, milestone, changes);
+  } else if (action === MilestoneAction.Deleted) {
     console.log("Deleting milestone", milestone);
     deleteMilestone(octokit, owner, repos, milestone);
   }
@@ -64,7 +64,7 @@ async function getMilestoneNumber(
       owner,
       repo,
       per_page: 100,
-      direction: 'desc',
+      direction: "desc",
     })
   ).data?.find((milestone) => milestone.title === title);
 
