@@ -8460,35 +8460,6 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -8509,11 +8480,14 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
 "use strict";
+// ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(2186);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(5438);
-/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __nccwpck_require__(2186);
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
+var github = __nccwpck_require__(5438);
+;// CONCATENATED MODULE: ./label.ts
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8524,43 +8498,31 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
     });
 };
 
-
-const owner = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.organization.login;
-const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("token");
-const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit(token);
-const { name: currentRepo } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.repository;
-const { eventName } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context;
-console.log({ eventName });
 var LabelAction;
 (function (LabelAction) {
     LabelAction["Created"] = "created";
     LabelAction["Deleted"] = "deleted";
     LabelAction["Edited"] = "edited";
 })(LabelAction || (LabelAction = {}));
-function handleLabelEvent() {
-    var _a;
+function handleLabelEvent(opts) {
     return __awaiter(this, void 0, void 0, function* () {
-        const repos = (_a = (yield octokit.rest.repos.listForOrg({
-            org: owner,
-        })).data
-            .filter((repo) => repo.private)) === null || _a === void 0 ? void 0 : _a.map(({ name }) => name).filter((name) => name != currentRepo);
-        console.log({ repos });
-        const { action, label, changes } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
+        const { octokit, owner, repos } = opts;
+        const { action, label, changes } = github.context.payload;
         if (action === LabelAction.Created) {
             console.log("Creating labels", label);
-            createLabel(octokit, repos, label);
+            createLabel(octokit, owner, repos, label);
         }
         else if (action === LabelAction.Deleted) {
             console.log("Deleting labels", label);
-            deleteLabel(octokit, repos, label);
+            deleteLabel(octokit, owner, repos, label);
         }
         else if (action === LabelAction.Edited) {
             console.log("Eiditing labels", label);
-            editLabel(octokit, repos, label, changes);
+            editLabel(octokit, owner, repos, label, changes);
         }
     });
 }
-function createLabel(octokit, repos, label) {
+function createLabel(octokit, owner, repos, label) {
     return __awaiter(this, void 0, void 0, function* () {
         const { name, color, description } = label;
         yield Promise.allSettled(repos.map((repo) => octokit.rest.issues.createLabel({
@@ -8572,7 +8534,7 @@ function createLabel(octokit, repos, label) {
         })));
     });
 }
-function deleteLabel(octokit, repos, label) {
+function deleteLabel(octokit, owner, repos, label) {
     return __awaiter(this, void 0, void 0, function* () {
         const { name } = label;
         yield Promise.allSettled(repos.map((repo) => octokit.rest.issues.deleteLabel({
@@ -8582,7 +8544,7 @@ function deleteLabel(octokit, repos, label) {
         })));
     });
 }
-function editLabel(octokit, repos, label, changes) {
+function editLabel(octokit, owner, repos, label, changes) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const { name: new_name, description, color } = label;
@@ -8597,18 +8559,152 @@ function editLabel(octokit, repos, label, changes) {
         })));
     });
 }
+
+;// CONCATENATED MODULE: ./milestone.ts
+var milestone_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+const { getOctokit } = github;
+var MilestoneAction;
+(function (MilestoneAction) {
+    MilestoneAction["Created"] = "created";
+    MilestoneAction["Deleted"] = "deleted";
+    MilestoneAction["Edited"] = "edited";
+    MilestoneAction["Opened"] = "opened";
+    MilestoneAction["Closed"] = "closed";
+})(MilestoneAction || (MilestoneAction = {}));
+function handleMilestoneEvent(opts) {
+    return milestone_awaiter(this, void 0, void 0, function* () {
+        const { octokit, owner, repos } = opts;
+        const { action, milestone, changes } = github.context.payload;
+        if (action === MilestoneAction.Created) {
+            console.log("Creating milestone", milestone);
+            createMilestone(octokit, owner, repos, milestone);
+            // createMilestone(octokit, owner, repos, milestone);
+        }
+        else if (action === MilestoneAction.Edited) {
+            console.log("Editing milestone", milestone);
+            updateMilestone(octokit, owner, repos, milestone, changes);
+        }
+        else if ([
+            MilestoneAction.Edited,
+            MilestoneAction.Opened,
+            MilestoneAction.Closed,
+        ].includes(action)) {
+            console.log("Deleting milestone", milestone);
+            deleteMilestone(octokit, owner, repos, milestone);
+        }
+    });
+}
+function getMilestoneNumber(octokit, owner, repo, title) {
+    var _a;
+    return milestone_awaiter(this, void 0, void 0, function* () {
+        console.log("Getting milestone number by title", title);
+        // TODO: implement pagination
+        const milestone = (_a = (yield octokit.rest.issues.listMilestones({
+            owner,
+            repo,
+            per_page: 100,
+            direction: 'desc',
+        })).data) === null || _a === void 0 ? void 0 : _a.find((milestone) => milestone.title === title);
+        return (milestone === null || milestone === void 0 ? void 0 : milestone.number) || null;
+    });
+}
+function createMilestone(octokit, owner, repos, milestone) {
+    return milestone_awaiter(this, void 0, void 0, function* () {
+        const { title } = milestone;
+        yield Promise.allSettled(repos.map((repo) => octokit.rest.issues.createMilestone({
+            owner,
+            repo,
+            title,
+        })));
+    });
+}
+function updateMilestone(octokit, owner, repos, milestone, changes) {
+    return milestone_awaiter(this, void 0, void 0, function* () {
+        yield Promise.allSettled(repos.map((repo) => milestone_awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const oldTitle = ((_a = changes.title) === null || _a === void 0 ? void 0 : _a.from) || milestone.title;
+            const number = yield getMilestoneNumber(octokit, owner, repo, oldTitle);
+            if (!number)
+                return;
+            const { title, state, description, due_on } = milestone;
+            yield octokit.rest.issues.updateMilestone({
+                owner,
+                repo,
+                milestone_number: number,
+                title,
+                state,
+                description,
+                due_on,
+            });
+        })));
+    });
+}
+function deleteMilestone(octokit, owner, repos, milestone) {
+    return milestone_awaiter(this, void 0, void 0, function* () {
+        yield Promise.allSettled(repos.map((repo) => milestone_awaiter(this, void 0, void 0, function* () {
+            const { title } = milestone;
+            const number = yield getMilestoneNumber(octokit, owner, repo, title);
+            if (!number)
+                return;
+            yield octokit.rest.issues.deleteMilestone({
+                owner,
+                repo,
+                milestone_number: number,
+            });
+        })));
+    });
+}
+
+;// CONCATENATED MODULE: ./index.ts
+var index_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+
+
+const owner = github.context.payload.organization.login;
+const token = core.getInput("token");
+const octokit = github.getOctokit(token);
+const { name: currentRepo } = github.context.payload.repository;
+const { eventName } = github.context;
+console.log({ eventName });
 function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const payload = JSON.stringify(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload, undefined, 2);
+    var _a;
+    return index_awaiter(this, void 0, void 0, function* () {
+        const payload = JSON.stringify(github.context.payload, undefined, 2);
         console.log(`The event payload: ${payload}`);
         try {
-            if ('label' === eventName) {
+            const repos = (_a = (yield octokit.rest.repos.listForOrg({
+                org: owner,
+            })).data
+                .filter((repo) => repo.private)) === null || _a === void 0 ? void 0 : _a.map(({ name }) => name).filter((name) => name != currentRepo);
+            if ("label" === eventName) {
                 console.log("Handling label event");
-                handleLabelEvent();
+                handleLabelEvent({ octokit, owner, repos });
+            }
+            else if ("milestone" === eventName) {
+                console.log("Handling milestone event");
+                handleMilestoneEvent({ octokit, owner, repos });
             }
         }
         catch (err) {
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(err.message);
+            core.setFailed(err.message);
         }
     });
 }
