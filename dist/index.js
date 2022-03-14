@@ -8619,11 +8619,14 @@ function getMilestoneNumber(octokit, owner, repo, title) {
 }
 function createMilestone(octokit, owner, repos, milestone) {
     return milestone_awaiter(this, void 0, void 0, function* () {
-        const { title } = milestone;
+        const { title, state, description, due_on } = milestone;
         yield Promise.allSettled(repos.map((repo) => octokit.rest.issues.createMilestone({
             owner,
             repo,
             title,
+            state,
+            description,
+            due_on
         })));
     });
 }
