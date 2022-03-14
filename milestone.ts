@@ -104,6 +104,7 @@ async function updateMilestone(
     repos.map(async (repo) => {
       const oldTitle = changes.title?.from || milestone.title;
       const number = await getMilestoneNumber(octokit, owner, repo, oldTitle);
+      console.log({ repo, oldTitle, number });
       if (!number) return;
       const { title, state, description, due_on } = milestone;
       await octokit.rest.issues.updateMilestone({

@@ -8636,6 +8636,7 @@ function updateMilestone(octokit, owner, repos, milestone, changes) {
             var _a;
             const oldTitle = ((_a = changes.title) === null || _a === void 0 ? void 0 : _a.from) || milestone.title;
             const number = yield getMilestoneNumber(octokit, owner, repo, oldTitle);
+            console.log({ repo, oldTitle, number });
             if (!number)
                 return;
             const { title, state, description, due_on } = milestone;
